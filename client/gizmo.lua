@@ -235,7 +235,7 @@ lib.addKeybind({
     name = 'gizmoclose',
     description = locale("close_gizmo_description"),
     defaultKey = 'RETURN',
-    onPressed = function(self)
+    onReleased = function(self)
         if not gizmoEnabled then return end
         gizmoEnabled = false
     end,
