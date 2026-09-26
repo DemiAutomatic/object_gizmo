@@ -1,3 +1,7 @@
+![](https://img.shields.io/github/downloads/DemiAutomatic/object_gizmo/total?logo=github)
+![](https://img.shields.io/github/downloads/DemiAutomatic/object_gizmo/latest/total?logo=github)
+![](https://img.shields.io/github/contributors/DemiAutomatic/object_gizmo?logo=github)
+![](https://img.shields.io/github/v/release/DemiAutomatic/object_gizmo?logo=github)\
 [![](https://badges.5metrics.dev/object_gizmo/serverRank.svg?style=for-the-badge)](https://5metrics.dev/resource/object_gizmo)
 [![](https://badges.5metrics.dev/object_gizmo/servers.svg?style=for-the-badge)](https://5metrics.dev/resource/object_gizmo)
 [![](https://badges.5metrics.dev/object_gizmo/players.svg?style=for-the-badge)](https://5metrics.dev/resource/object_gizmo)
