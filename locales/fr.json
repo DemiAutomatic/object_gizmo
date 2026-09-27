@@ -18,5 +18,14 @@
 	"toggle_space_description": "Basculer le gizmo en local par rapport à l'entité au lieu du monde",
 	"close_gizmo_description": "Fermer le gizmo",
 	"snap_to_ground_description": "Coller l'objet gizmo actuel au sol/surface",
-	"scale_mode_description": "Passe le gizmo en mode mise à l'échelle"
+	"scale_mode_description": "Passe le gizmo en mode mise à l'échelle",
+	"cancel": "Annuler",
+	"snap_on": "Aimantation activée",
+	"snap_off": "Aimantation désactivée",
+	"copy_transform": "Copier la transformation",
+	"copied": "Transformation copiée dans le presse-papiers",
+	"limit_reached": "Limite atteinte",
+	"cursor_description": "Basculer le curseur du gizmo",
+	"toggle_snap_description": "Basculer l'aimantation de la position et de la rotation",
+	"copy_description": "Copier la transformation de l'entité dans le presse-papiers"
 }

@@ -49,9 +49,11 @@ jobs:
 
       - name: Bundle files
         run: |
-          mkdir -p ./temp/object_gizmo
-          cp ./{LICENSE,README.md,fxmanifest.lua,version.lua} ./temp/object_gizmo
+          mkdir -p ./temp/object_gizmo/web
+          cp ./{LICENSE,README.md,fxmanifest.lua,version.lua,config.lua,types.lua} ./temp/object_gizmo
           cp -r ./client ./temp/object_gizmo
+          cp -r ./locales ./temp/object_gizmo
+          cp -r ./web/dist ./temp/object_gizmo/web/dist
           cd ./temp && zip -r ../object_gizmo.zip ./object_gizmo
 
       - name: Create Release

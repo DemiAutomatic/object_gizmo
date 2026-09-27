@@ -18,5 +18,14 @@
 	"toggle_space_description": "Toggle gizmo to be local to the entity instead of world",
 	"close_gizmo_description": "Close gizmo",
 	"snap_to_ground_description": "Snap current gizmo object to floor/surface",
-	"scale_mode_description": "Sets mode for the gizmo to scale"
+	"scale_mode_description": "Sets mode for the gizmo to scale",
+	"cancel": "Cancel",
+	"snap_on": "Snap On",
+	"snap_off": "Snap Off",
+	"copy_transform": "Copy Transform",
+	"copied": "Copied the transform to the clipboard",
+	"limit_reached": "Limit reached",
+	"cursor_description": "Toggle the gizmo cursor",
+	"toggle_snap_description": "Toggle position and rotation snapping",
+	"copy_description": "Copy the entity transform to the clipboard"
 }

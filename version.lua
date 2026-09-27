@@ -1,1 +1,1 @@
-lib.versionCheck('Demigod916/object_gizmo')
+lib.versionCheck('DemiAutomatic/object_gizmo')

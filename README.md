@@ -6,92 +6,149 @@
 [![](https://badges.5metrics.dev/object_gizmo/servers.svg?style=for-the-badge)](https://5metrics.dev/resource/object_gizmo)
 [![](https://badges.5metrics.dev/object_gizmo/players.svg?style=for-the-badge)](https://5metrics.dev/resource/object_gizmo)
 
+# object_gizmo
 
-# Object Gizmo Module
+A drop-in 3D gizmo for moving, rotating, and optionally scaling entities.
 
-This module exports a `useGizmo` function that enables manipulation of entity position and rotation.
+Documentation: [sleeplessdevelopment.dev/docs/gizmo](https://sleeplessdevelopment.dev/docs/gizmo)
+
+`exports.object_gizmo:useGizmo(entity)` still blocks until the player is done, and still returns `handle`, `position`, and `rotation`. Extra result fields are safe to ignore.
+
+## Dependencies
+
+- [ox_lib](https://github.com/communityox/ox_lib)
+
+[sleepless_prompts](https://github.com/Sleepless-Development/sleepless_prompts) is optional. When it is running, the controls use a prompt strip. Otherwise they use ox_lib text UI, which also prints the live position and rotation. Set `Config.prompts = false` to keep that text UI.
 
 ## Installation
 
-1. Download the `object_gizmo` resource.
-2. Extract the `object_gizmo` folder into your server's `resources` directory.
-3. Add `start object_gizmo` to your server's `server.cfg` file.
+1. Download `object_gizmo`.
+2. Put the folder in your `resources` directory. Keep the folder name `object_gizmo`.
+3. Add `ensure object_gizmo` to `server.cfg` after `ox_lib`.
 
-## Export
+## 💾 Download
 
-`exports.object_gizmo:useGizmo(handle)`
+[object_gizmo.zip](https://github.com/Sleepless-Development/object_gizmo/releases/latest/download/object_gizmo.zip)
 
 ## Usage
 
-Ensure the `object_gizmo` module script is running on your server.
-
-The `useGizmo` export can be used in any Lua script on the client side as follows:
-
 ```lua
-local handle = --[[Your target entity]]
+local handle = --[[ your entity ]]
 local result = exports.object_gizmo:useGizmo(handle)
+
+if result.confirmed then
+    lib.print.info(result.position, result.rotation)
+end
 ```
 
-`result` will contain the entity handle, final position, and final rotation.
+`result.cancelled` is true when the player backs out or the entity disappears. With the default config, cancel puts the entity back where it was when the gizmo opened.
 
-## Test Command
+### Options
 
-This module includes a test command `testGizmo` that demonstrates how to use the gizmo.
-It is only registered when `Config.debug` is `true`, and logs a warning when it is.
+The second argument is optional. A number is treated as a distance limit, in metres, measured from the entity origin at the start of the edit.
 
-The command creates an object at the player's location and then activates the gizmo for that object.
+Any `config.lua` value can be overridden for a single call. Omitted keys keep the config value.
 
 ```lua
-local model = `prop_mp_cone_02`
-RegisterCommand('testGizmo', function()
-    local offset = GetEntityCoords(cache.ped) + GetEntityForwardVector(cache.ped) * 3
-    lib.requestModel(model)
-    local obj = CreateObject(model, offset.x, offset.y, offset.z, false, false, false)
-    local data = exports.object_gizmo:useGizmo(obj)
+exports.object_gizmo:useGizmo(entity, 2.5)
 
-    lib.print.info(data)
-end)
+exports.object_gizmo:useGizmo(entity, {
+    camera = 'gameplay', -- 'gameplay' or 'orbit'
+    mode = 'rotate',     -- 'translate', 'rotate', 'scale'
+    space = 'local',     -- 'world' or 'local' ('relative' is accepted)
+    pivot = 'origin',    -- 'origin' or 'center'
+    enableScale = true,
+    enableCancel = true,
+    enableCopy = false,
+    enableSnapToggle = true,
+    snap = true,
+    snapToGround = true,
+    translationSnap = 0.1,
+    rotationSnap = 15,
+    distanceLimit = 2.5,
+    origin = vec3(0.0, 0.0, 0.0),
+    bounds = lib.zones.box({
+        coords = vec3(100.0, 200.0, 30.0),
+        size = vec3(4.0, 4.0, 3.0),
+        rotation = 45,
+    }),
+    outline = true,
+    outlineColor = { r = 255, g = 255, b = 255, a = 255 },
+    outlineShader = 0,
+    pedAlpha = 200,
+    gizmoSize = 0.7,
+    freezeEntity = true,
+    freezePlayer = false,
+    playerCanMove = false,
+    prompts = true,
+    promptPosition = 'bottom-center',
+    promptLayout = 'row',
+    textUiPosition = 'right-center',
+    showCoords = true,
+    orbit = { minRadius = 2.0, maxRadius = 12.0, zoomStep = 0.5 },
+    onChange = function(update)
+        -- fires while the entity is moving. update.confirmed is false here.
+    end,
+})
 ```
 
-## Locales
+`pivot = 'center'` puts the handles on the model bounds and rotates around that point. The returned `position` is still the entity origin, which is what existing scripts save.
 
-Set the language with the `ox:locale` convar in your `server.cfg`, e.g. `setr ox:locale "de"`.
+`camera = 'gameplay'` keeps the player camera. `camera = 'orbit'` takes a scripted camera: drag empty space to orbit, and use the wheel to zoom. Set the usual choice in `config.lua`, then pass the other one on the calls that need it.
 
-Available: `cs`, `de`, `en`, `es`, `fr`, `it`, `nl`, `pl`, `pt-br`, `ru`, `sv`, `tr`.
+`bounds` keeps the entity origin inside an ox_lib zone. Pass a zone you already created, or a definition with `type = 'box'`, `'sphere'`, or `'poly'` and the same fields `lib.zones` accepts. A definition is removed when the gizmo closes. An existing zone is left alone. `debug = true` on a definition draws it for the edit. The limit follows `zone:contains`, so boxes keep their rotation and polys keep their thickness. `distanceLimit` still applies as well. The prompt shows the limit when the entity is against the edge.
 
-To add one, copy `locales/en.json` to `locales/<code>.json` and translate the values. The manifest
-globs `locales/*.json`, so no other change is needed.
-
-## Configuration
-
-The `config.lua` file at the root of the resource lets you change how the gizmo looks:
+### Other exports
 
 ```lua
-Config.outlineColor = { r = 255, g = 255, b = 255, a = 255 } -- highlight colour (RGBA, 0-255)
-Config.outlineShader = 0                                    -- 0 = hard edge, 1 = softer/filled edge
-Config.pedAlpha = 200                                       -- peds can't be outlined, they fade instead (0-255)
-Config.enableScale = false                                  -- enable Scale Mode ([S])
-Config.debug = false                                        -- enable the /testGizmo debug command
+exports.object_gizmo:isGizmoActive()
+exports.object_gizmo:cancelGizmo()
+exports.object_gizmo:confirmGizmo()
 ```
+
+Local events, for other resources that want to react without wrapping the export:
+
+- `object_gizmo:client:editStarted` `(entity)`
+- `object_gizmo:client:editFinished` `(result)`
 
 ## Controls
 
-While using the gizmo, the following controls apply:
-- [W]: Switch to Translate Mode
-- [R]: Switch to Rotate Mode
-- [S]: Switch to Scale Mode (if enabled)
-- [Q]: Switch between Relative and World
-- [LAlt]: Snap To Ground
-- [Enter]: Finish Editing
+Defaults match the previous version. Players can rebind them under Settings, Key Bindings, FiveM.
 
-The current mode (Translate/Rotate) will be displayed on the screen.
+- [W] Translate
+- [R] Rotate
+- [S] Scale, when scale is enabled for that call
+- [Q] World / local
+- [LAlt] Snap to ground
+- [G] Release the cursor so the gameplay camera can look around
+- [X] Toggle snap
+- [C] Copy the transform to the clipboard
+- [Enter] Finish
+- [Esc] Cancel and restore
 
-## Note
+[G] is not used while the camera mode is `orbit`.
 
-The gizmo only works on entities that you have sufficient permissions to manipulate. Make sure you have the correct permissions to move or rotate the entity you are working with.
+## Configuration
+
+`config.lua` keeps the existing options (`outlineColor`, `outlineShader`, `pedAlpha`, `enableScale`, `debug`) and adds the new ones. Anything left unset falls back to the defaults in the client, so an older `config.lua` still loads.
+
+Set the language with the `ox:locale` convar, for example `setr ox:locale "de"`.
+
+Available: `cs`, `de`, `en`, `es`, `fr`, `it`, `nl`, `pl`, `pt-br`, `ru`, `sv`, `tr`.
+
+## Test command
+
+`/testGizmo` is registered only when `Config.debug` is true.
+
+```lua
+/testGizmo
+/testGizmo prop_bench_01a
+/testGizmo orbit
+/testGizmo gameplay prop_barrier_work05
+```
 
 ## Credits
 
-- [Andyyy7666](https://github.com/overextended/ox_lib/pull/453)
-- [AvarianKnight](https://forum.cfx.re/t/allow-drawgizmo-to-be-used-outside-of-fxdk/5091845/8?u=demi-automatic)
-- [citizenfx](https://github.com/citizenfx/lua/blob/luaglm-dev/cfx/libs/scripts/examples/dataview.lua) — `client/dataview.lua`
+- [DemiAutomatic](https://github.com/DemiAutomatic/object_gizmo)
+- [three.js](https://github.com/mrdoob/three.js)
+- [overextended/ox_lib](https://github.com/communityox/ox_lib)
