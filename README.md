@@ -121,7 +121,7 @@ Defaults match the previous version. Players can rebind them under Settings, Key
 - [Q] World / local
 - [LAlt] Snap to ground
 - [G] Release the cursor so the gameplay camera can look around
-- [X] Toggle snap
+- ['X'] Toggle snap
 - [C] Copy the transform to the clipboard
 - [Enter] Finish
 - [Esc] Cancel and restore
