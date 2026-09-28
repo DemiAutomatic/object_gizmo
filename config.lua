@@ -27,7 +27,7 @@ Config.debug = false
 
 -- 'gameplay' keeps the player's camera. [G] releases the cursor so they can look around.
 -- 'orbit' takes a scripted camera that orbits the entity while the cursor is held.
-Config.camera = 'gameplay'
+Config.camera = 'orbit'
 
 -- Starting transform mode: 'translate', 'rotate', or 'scale'.
 Config.mode = 'translate'
@@ -37,7 +37,7 @@ Config.space = 'world'
 
 -- Where the handles sit. 'origin' matches the entity position scripts already save.
 -- 'center' uses the model bounding box, which is better for rotating props.
-Config.pivot = 'origin'
+Config.pivot = 'center'
 
 -- Freeze the entity while editing, then restore the freeze state it had before.
 Config.freezeEntity = true
