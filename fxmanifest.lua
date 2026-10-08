@@ -6,7 +6,7 @@ lua54 'yes'
 name 'object_gizmo'
 author 'DemiAutomatic'
 description 'Move and rotate entities with a 3D gizmo'
-version '3.0.0'
+version '3.1.0'
 
 shared_scripts {
 	'@ox_lib/init.lua',
