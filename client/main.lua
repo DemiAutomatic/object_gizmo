@@ -484,13 +484,84 @@ local function copyTransform()
 	})
 end
 
+---@param entity number
+---@param coords vector3
+---@return number | nil
+local function probeGroundZ(entity, coords)
+	local handle = StartShapeTestLosProbe(
+		coords.x, coords.y, coords.z + 2.0,
+		coords.x, coords.y, coords.z - 50.0,
+		1 | 16,
+		entity,
+		7
+	)
+
+	local deadline = GetGameTimer() + 250
+	while GetGameTimer() < deadline do
+		local state, hit, endCoords = GetShapeTestResult(handle)
+		if state ~= 1 then
+			if hit == 1 or hit == true then
+				return endCoords.z
+			end
+			return nil
+		end
+		Wait(0)
+	end
+end
+
+---@param entity number
+local function snapPedToGround(entity)
+	local coords = GetEntityCoords(entity)
+	local groundZ = probeGroundZ(entity, coords)
+	if not groundZ then
+		local found, z = GetGroundZFor_3dCoord(coords.x, coords.y, coords.z, false)
+		if found then groundZ = z end
+	end
+	if not groundZ then return end
+	SetEntityCoordsNoOffset(entity, coords.x, coords.y, groundZ + 1.0, false, false, false)
+end
+
 local function snapToGround()
 	if not session or not session.open or not session.snapToGround or not once('ground') then return end
-	if not DoesEntityExist(session.entity) then return end
+	local entity = session.entity
+	if not DoesEntityExist(entity) then return end
 
-	PlaceObjectOnGroundProperly_2(session.entity)
-	clampOrigin(session.entity)
-	applyLockedScale(session.entity)
+	-- Furniture previews disable collision. PlaceObjectOnGroundOrObjectProperly
+	-- no-ops unless the entity can collide, and it never moves a ped.
+	local frozen = IsEntityPositionFrozen(entity)
+	local collisionDisabled = GetEntityCollisionDisabled(entity)
+	local isPed = IsEntityAPed(entity)
+
+	if frozen then
+		FreezeEntityPosition(entity, false)
+	end
+
+	if collisionDisabled and not isPed then
+		SetEntityCollision(entity, true, true)
+		Wait(0)
+	end
+
+	local stillOpen = session and session.open and DoesEntityExist(entity)
+	if stillOpen then
+		if isPed then
+			snapPedToGround(entity)
+		else
+			PlaceObjectOnGroundOrObjectProperly(entity)
+		end
+	end
+
+	if collisionDisabled and DoesEntityExist(entity) then
+		SetEntityCollision(entity, false, false)
+	end
+
+	if frozen and DoesEntityExist(entity) then
+		FreezeEntityPosition(entity, true)
+	end
+
+	if not stillOpen then return end
+
+	clampOrigin(entity)
+	applyLockedScale(entity)
 	pushEntity()
 	refreshHud()
 
@@ -545,16 +616,20 @@ local function highlight(entity)
 	local color = session.outlineColor
 	SetEntityDrawOutlineColor(color.r, color.g, color.b, color.a)
 	SetEntityDrawOutlineShader(session.outlineShader)
+	ResetEntityDrawOutlineRenderTechnique()
 	SetEntityDrawOutline(entity, true)
 end
 
 local function clearHighlight()
 	local entity = session.entity
 	if not DoesEntityExist(entity) then return end
-	SetEntityDrawOutline(entity, false)
-	if session.savedAlpha then
+	if session.savedAlpha and DoesEntityExist(entity) then
 		SetEntityAlpha(entity, session.savedAlpha, false)
 	end
+	if IsEntityAPed(entity) then return end
+	SetEntityDrawOutline(entity, false)
+	SetEntityDrawOutlineShader(session.outlineShader or 0)
+	ResetEntityDrawOutlineRenderTechnique()
 end
 
 ---@param entity number

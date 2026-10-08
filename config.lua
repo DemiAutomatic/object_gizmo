@@ -9,12 +9,10 @@ Config.outlineColor = {
 	a = 255
 }
 
--- Outline shader used to render the highlight.
--- 0 = default (hard edge), 1 = softer/filled edge.
+-- Outline shader for objects.
 Config.outlineShader = 0
 
--- Peds cannot be outlined, so they are made translucent instead.
--- Alpha applied to a ped while the gizmo is active (0 - 255).
+-- Alpha applied while the gizmo is open on a ped (0 - 255).
 Config.pedAlpha = 200
 
 -- Allow scaling mode ([S]).
@@ -46,7 +44,7 @@ Config.freezeEntity = true
 Config.freezePlayer = false
 
 -- Drop entity collision for the duration of the edit, then turn it back on.
-Config.disableCollision = false
+Config.disableCollision = true
 
 -- [Esc] restores the entity to the transform it had when the gizmo opened.
 Config.enableCancel = true

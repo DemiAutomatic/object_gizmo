@@ -130,7 +130,7 @@ Defaults match the previous version. Players can rebind them under Settings, Key
 
 ## Configuration
 
-`config.lua` keeps the existing options (`outlineColor`, `outlineShader`, `pedAlpha`, `enableScale`, `debug`) and adds the new ones. Anything left unset falls back to the defaults in the client, so an older `config.lua` still loads.
+`config.lua` keeps the existing options (`outlineColor`, `outlineShader`, `pedAlpha`, `enableScale`, `debug`) and adds the new ones. Anything left unset falls back to the defaults in the client, so an older `config.lua` still loads. Peds are faded with `pedAlpha`. `SetEntityDrawOutline` is not used on them.
 
 Set the language with the `ox:locale` convar, for example `setr ox:locale "de"`.
 
@@ -143,7 +143,10 @@ Available: `cs`, `de`, `en`, `es`, `fr`, `it`, `nl`, `pl`, `pt-br`, `ru`, `sv`, 
 ```lua
 /testGizmo
 /testGizmo prop_bench_01a
+/testGizmo ped
+/testGizmo ped a_f_y_business_01
 /testGizmo orbit
+/testGizmo orbit ped
 /testGizmo gameplay prop_barrier_work05
 ```
 
