@@ -1,1 +1,7 @@
+node_modules/
 web/node_modules/
+**/.vite/
+*.tsbuildinfo
+web/dist/
+web/build/
+dui/build/

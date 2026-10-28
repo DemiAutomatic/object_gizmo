@@ -28,6 +28,21 @@ jobs:
       - name: Set env
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install web dependencies
+        run: bun install --frozen-lockfile
+        working-directory: web
+
+      - name: Build web
+        run: bun run build
+        working-directory: web
+        env:
+          CI: false
+
       - name: Bump manifest version
         run: node .github/actions/bump-manifest-version.js
         env:
