@@ -21,14 +21,17 @@ export function threeToGta(vec: Vec3): Vec3 {
 	return { x: vec.x, y: -vec.z, z: vec.y }
 }
 
+// Order 2 is yaw about Z, pitch about X, then roll about Y. Three Z points along GTA -Y, so roll is negated.
+export const EULER_ORDER = 'YXZ'
+
 export function gtaRotationToEuler(rotation: Vec3): [number, number, number] {
-	return [rotation.x * RAD, rotation.z * RAD, rotation.y * RAD]
+	return [rotation.x * RAD, rotation.z * RAD, -rotation.y * RAD]
 }
 
 export function eulerToGtaRotation(x: number, y: number, z: number): Vec3 {
 	return {
 		x: x * DEG,
-		y: z * DEG,
+		y: -z * DEG,
 		z: y * DEG,
 	}
 }

@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
 import {
+	EULER_ORDER,
 	eulerToGtaRotation,
 	gtaRotationToEuler,
 	gtaToThree,
@@ -110,13 +111,13 @@ function writeEntity(data: { position: Vec3, rotation: Vec3, scale?: Vec3 }) {
 	const position = gtaToThree(data.position)
 	const euler = gtaRotationToEuler(data.rotation)
 	worldPosition.set(position.x, position.y, position.z)
-	worldQuaternion.setFromEuler(new THREE.Euler(euler[0], euler[1], euler[2], 'YZX'))
+	worldQuaternion.setFromEuler(new THREE.Euler(euler[0], euler[1], euler[2], EULER_ORDER))
 	if (data.scale) worldScale.set(data.scale.x, data.scale.y, data.scale.z)
 	placeMesh()
 }
 
 function readEntity(): GtaTransform {
-	const euler = new THREE.Euler().setFromQuaternion(worldQuaternion, 'YZX')
+	const euler = new THREE.Euler().setFromQuaternion(worldQuaternion, EULER_ORDER)
 	return {
 		position: threeToGta({ x: worldPosition.x, y: worldPosition.y, z: worldPosition.z }),
 		rotation: eulerToGtaRotation(euler.x, euler.y, euler.z),
